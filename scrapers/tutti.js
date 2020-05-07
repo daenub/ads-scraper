@@ -5,7 +5,7 @@ const {JSDOM} = jsdom
 const SERVICE_URL = "https://www.tutti.ch/de/li/ganze-schweiz"
 const SERIVCE_QUERY_KEY = "q"
 
-export function scrape(query) {
+module.exports = function(query) {
   return new Promise((resolve, reject) => {
     if (!query) {
       reject("Please define a search query")
