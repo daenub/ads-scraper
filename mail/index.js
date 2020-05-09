@@ -5,12 +5,14 @@ dotenv.config()
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const msg = {
-  to: "danbueschlen@gmail.com",
-  from: "hello@danbueschlen.ch",
-  subject: "Sending with Twilio SendGrid is Fun",
-  text: "and easy to do anywhere, even with Node.js",
-  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-};
+export function sendResults(markup) {
+  const msg = {
+    to: "danbueschlen@gmail.com",
+    from: "hello@danbueschlen.ch",
+    subject: "Ads Result",
+    text: "TEST",
+    html: markup,
+  }
 
-sgMail.send(msg).then(console.log).catch(console.error)
+  return sgMail.send(msg)
+}

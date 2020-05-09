@@ -5,7 +5,7 @@ const {JSDOM} = jsdom
 const SERVICE_URL = "https://www.tutti.ch/de/li/ganze-schweiz"
 const SERIVCE_QUERY_KEY = "q"
 
-export default function(query) {
+export default function scrape(query) {
   return new Promise((resolve, reject) => {
     if (!query) {
       reject("Please define a search query")
@@ -24,7 +24,7 @@ export default function(query) {
         const dom = new JSDOM(body)
         const ads = Array.from(dom.window.document.querySelectorAll("[data-automation='component-ad']"))
 
-        results = ads.map(ad => {
+        const results = ads.map(ad => {
           return {
             title: ad.querySelector("[class^='Ad__title']").textContent,
             price: ad.querySelector("[class^='Ad__price']").textContent,
@@ -34,8 +34,15 @@ export default function(query) {
           }
         })
 
-        resolve(results)
+        resolve(results.map(generateMarkup))
       })
     })
   })
+}
+
+function generateMarkup(ad) {
+  return `
+    <h2><a href="${ad.link}">${ad.title}</a></h2>
+    <p>${ad.price} – ${ad.location} $${ad.date}</p>
+  `
 }

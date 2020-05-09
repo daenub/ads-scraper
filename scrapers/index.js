@@ -1,7 +1,7 @@
 import tutti from "./tutti"
 import anibis from "./anibis"
 
-export default {
+export default [
   tutti,
-  anibis,
-}
+  anibis
+]
