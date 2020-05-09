@@ -1,11 +1,11 @@
-const https = require("https")
-const jsdom = require("jsdom")
+import https from "https"
+import jsdom from "jsdom"
 const {JSDOM} = jsdom
 
 const SERVICE_URL = "https://www.anibis.ch/de/advertlist.aspx"
 const SERIVCE_QUERY_KEY = "fts"
 
-module.exports = function(query) {
+export default function(query) {
   return new Promise((resolve, reject) => {
     if (!query) {
       reject("Please define a search query")

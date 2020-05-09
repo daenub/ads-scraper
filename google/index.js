@@ -1,24 +1,29 @@
-require('dotenv').config()
+require("dotenv").config()
 
-console.log(process.env)
-
-const fs = require('fs')
-const readline = require('readline')
-const {google} = require('googleapis')
+const fs = require("fs")
+const readline = require("readline")
+const {google} = require("googleapis")
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-// The file token.json stores the user's access and refresh tokens, and is
+const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+// The file token.json stores the user"s access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = 'token.json';
+const TOKEN_PATH = "token.json";
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), listMajors);
-});
+export function loadCredentials() {
+  return new Promise((resolve, reject) => {
+    fs.readFile("credentials.json", (err, content) => {
+      if (err) {
+        reject(err)
+        return
+      }
+      // Authorize a client with credentials, then call the Google Sheets API.
+      authorize(JSON.parse(content), resolve)
+    });
+  })
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -47,23 +52,23 @@ function authorize(credentials, callback) {
  */
 function getNewToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
+    access_type: "offline",
     scope: SCOPES,
   });
-  console.log('Authorize this app by visiting this url:', authUrl);
+  console.log("Authorize this app by visiting this url:", authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', (code) => {
+  rl.question("Enter the code from that page here: ", (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error while trying to retrieve access token', err);
+      if (err) return console.error("Error while trying to retrieve access token", err);
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
+        console.log("Token stored to", TOKEN_PATH);
       });
       callback(oAuth2Client);
     });
@@ -75,22 +80,28 @@ function getNewToken(oAuth2Client, callback) {
  * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function listMajors(auth) {
-  const sheets = google.sheets({version: 'v4', auth});
-  sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.SPREADSHEET_ID,
-    range: 'Gear!A2:B',
-  }, (err, res) => {
-    if (err) return console.log('The API returned an error: ' + err);
-    const rows = res.data.values;
-    if (rows.length) {
-      console.log('Name, Category:');
-      // Print columns A and E, which correspond to indices 0 and 4.
-      rows.map((row) => {
-        console.log(`${row[0]}, ${row[1]}`);
-      });
-    } else {
-      console.log('No data found.');
+export function getSearchQueries(auth) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const auth = await loadCredentials()
+      const sheets = google.sheets({version: "v4", auth});
+
+      sheets.spreadsheets.values.get({
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: "Gear!A2:B",
+      }, (err, res) => {
+        if (err) return console.log("The API returned an error: " + err);
+        const rows = res.data.values;
+        if (rows.length) {
+          resolve(rows.map((row) => {
+            return row[0].split(";")
+          }))
+        } else {
+          resolve([])
+        }
+      })
+    } catch (err) {
+      reject(err)
     }
-  });
+  })
 }

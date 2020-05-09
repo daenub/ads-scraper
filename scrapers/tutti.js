@@ -1,11 +1,11 @@
-const https = require("https")
-const jsdom = require("jsdom")
+import https from "https"
+import jsdom from "jsdom"
 const {JSDOM} = jsdom
 
 const SERVICE_URL = "https://www.tutti.ch/de/li/ganze-schweiz"
 const SERIVCE_QUERY_KEY = "q"
 
-module.exports = function(query) {
+export default function(query) {
   return new Promise((resolve, reject) => {
     if (!query) {
       reject("Please define a search query")
