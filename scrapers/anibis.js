@@ -12,19 +12,20 @@ export default function scrape(query) {
       return
     }
 
-    let url =
-      `${SERVICE_URL}?${SERIVCE_QUERY_KEY}=${encodeURIComponent(query)}`
+    let url = `${SERVICE_URL}?${SERIVCE_QUERY_KEY}=${encodeURIComponent(query)}`
 
-    https.get(url, res => {
+    https.get(url, (res) => {
       let body = ""
 
-      res.on("data", data => body += data)
+      res.on("data", (data) => (body += data))
       res.on("error", reject)
       res.on("end", () => {
         const dom = new JSDOM(body)
-        const ads = Array.from(dom.window.document.querySelectorAll("article[class^='sc-10awqyf-0']"))
+        const ads = Array.from(
+          dom.window.document.querySelectorAll("article[class^='sc-10awqyf-0']")
+        )
 
-        const results = ads.map(ad => {
+        const results = ads.map((ad) => {
           return {
             title: ad.querySelector("h2[class^='sc-']").textContent,
             price: ad.querySelector(".sc-1hmmkgo-0").textContent,
@@ -36,7 +37,7 @@ export default function scrape(query) {
         if (results.length > 0) {
           resolve({
             query,
-            markup: results.map(generateMarkup)
+            markup: results.map(generateMarkup),
           })
         } else {
           resolve(null)

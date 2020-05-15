@@ -12,32 +12,37 @@ export default function scrape(query) {
       return
     }
 
-    let url =
-      `${SERVICE_URL}?${SERIVCE_QUERY_KEY}=${encodeURIComponent(query)}`
+    let url = `${SERVICE_URL}?${SERIVCE_QUERY_KEY}=${encodeURIComponent(query)}`
 
-    https.get(url, res => {
+    https.get(url, (res) => {
       let body = ""
 
-      res.on("data", data => body += data)
+      res.on("data", (data) => (body += data))
       res.on("error", reject)
       res.on("end", () => {
         const dom = new JSDOM(body)
-        const ads = Array.from(dom.window.document.querySelectorAll("[data-automation='component-ad']"))
+        const ads = Array.from(
+          dom.window.document.querySelectorAll(
+            "[data-automation='component-ad']"
+          )
+        )
 
-        const results = ads.map(ad => {
+        const results = ads.map((ad) => {
           return {
             title: ad.querySelector("[class^='Ad__title']").textContent,
             price: ad.querySelector("[class^='Ad__price']").textContent,
-            location: ad.querySelector("[class^='Ad__location_info']").textContent,
+            location: ad.querySelector("[class^='Ad__location_info']")
+              .textContent,
             date: ad.querySelector("[class^='Ad__date']").textContent,
-            link: "https://tutti.ch" + ad.querySelector("[class^='Ad__link']").href,
+            link:
+              "https://tutti.ch" + ad.querySelector("[class^='Ad__link']").href,
           }
         })
 
         if (results.length > 0) {
           resolve({
             query,
-            markup: results.map(generateMarkup)
+            markup: results.map(generateMarkup),
           })
         } else {
           resolve(null)

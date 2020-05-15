@@ -8,7 +8,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 function getFormatedDate() {
   const d = new Date()
 
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`
+  return `${d.getFullYear()}-${
+    d.getMonth() + 1
+  }-${d.getDate()} ${d.getHours()}:${d.getMinutes()}`
 }
 
 export function sendResults(results) {
@@ -25,18 +27,18 @@ export function sendResults(results) {
   return sgMail.send(msg)
 }
 
-
 const mailTemplate = (date, results) => `
   <h1>We've found new ad's!</h1>
   <time>${date}</time>
-  ${
-    results.reduce((str, result) => {
-      return str + `
+  ${results.reduce((str, result) => {
+    return (
+      str +
+      `
         <h2>
           ${result.query}
         </h2>
         ${result.markup}
       `
-    }, "")
-  }
+    )
+  }, "")}
 `
