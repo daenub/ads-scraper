@@ -33,7 +33,11 @@ export default function scrape(query) {
           }
         })
 
-        resolve(results.map(generateMarkup))
+        if (results.length > 0) {
+          resolve(results.map(generateMarkup))
+        } else {
+          resolve(null)
+        }
       })
     })
   })

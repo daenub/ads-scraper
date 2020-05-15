@@ -12,11 +12,16 @@ import {sendResults} from "./mail"
   }, [])
 
   const scrapeResults = await Promise.all(scrapeRequests)
+  const resultsMarkup = scrapeResults.filter(r => r !== null).reduce((acc, r) => acc + r.join("")).join("")
 
   try {
-    await sendResults(scrapeResults.reduce((acc, r) => acc + r.join("")), "")
+    await sendResults(resultsMarkup)
     console.log("Success !")
-  } catch (err) {
-    console.error("Mail", err, err.response.body.errors)
+  } catch (error) {
+    console.error(error)
+
+    if (error.response) {
+      console.error(error.response.body)
+    }
   }
 })()

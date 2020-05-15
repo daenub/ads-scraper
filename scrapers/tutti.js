@@ -34,7 +34,11 @@ export default function scrape(query) {
           }
         })
 
-        resolve(results.map(generateMarkup))
+        if (results.length > 0) {
+          resolve(results.map(generateMarkup))
+        } else {
+          resolve(null)
+        }
       })
     })
   })
@@ -43,6 +47,6 @@ export default function scrape(query) {
 function generateMarkup(ad) {
   return `
     <h2><a href="${ad.link}">${ad.title}</a></h2>
-    <p>${ad.price} – ${ad.location} $${ad.date}</p>
+    <p>${ad.price} – ${ad.location} ${ad.date}</p>
   `
 }
