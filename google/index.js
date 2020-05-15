@@ -88,7 +88,7 @@ export function getSearchQueries(auth) {
 
       sheets.spreadsheets.values.get({
         spreadsheetId: process.env.SPREADSHEET_ID,
-        range: "Gear!A2:B",
+        range: process.env.SPREADSHEET_RANGE,
       }, (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
         const rows = res.data.values;
