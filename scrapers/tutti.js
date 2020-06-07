@@ -23,19 +23,19 @@ export default function scrape(query) {
         const dom = new JSDOM(body)
         const ads = Array.from(
           dom.window.document.querySelectorAll(
-            "[data-automation='component-ad']"
+            "[data-automation='ad']"
           )
         )
 
         const results = ads.map((ad) => {
           return {
-            title: ad.querySelector("[class^='Ad__title']").textContent,
-            price: ad.querySelector("[class^='Ad__price']").textContent,
-            location: ad.querySelector("[class^='Ad__location_info']")
+            title: ad.querySelector("h4").textContent,
+            price: ad.querySelector("._6HJe5").textContent,
+            location: ad.querySelector("._3f6Er")
               .textContent,
-            date: ad.querySelector("[class^='Ad__date']").textContent,
+            date: ad.querySelector("._1kvIw").textContent,
             link:
-              "https://tutti.ch" + ad.querySelector("[class^='Ad__link']").href,
+              "https://tutti.ch" + ad.querySelector("a").href,
           }
         })
 
