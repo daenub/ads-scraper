@@ -10,7 +10,7 @@
     "@sendgrid/mail": "^7.1.0",
     "dotenv": "^8.2.0",
     "googleapis": "39",
-    "jsdom": "^16.2.2"
+    "jsdom": "^16.5.0"
   },
   "scripts": {
     "auth": "babel-node google/auth",
